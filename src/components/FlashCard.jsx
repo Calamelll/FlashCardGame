@@ -221,6 +221,7 @@ const FlashCard = ({ card, onSwipeRight, onSwipeLeft }) => {
             <>
               <div className="card-header">
                 <h2 className="card-title">{card.location}</h2>
+                {card.description && <p className="location-description">{card.description}</p>}
               </div>
               
               <div className="content-container">
@@ -245,7 +246,6 @@ const FlashCard = ({ card, onSwipeRight, onSwipeLeft }) => {
                     </div>
                   </div>
                 )}
-                {card.description && <p className="content-text">{card.description}</p>}
               </div>
             </>
           )}

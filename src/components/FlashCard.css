@@ -128,6 +128,16 @@
   text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
+.location-description {
+  font-size: 1.1rem;
+  color: #34495e;
+  font-weight: 500;
+  line-height: 1.6;
+  margin-top: 12px;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
 .content-container {
   background: linear-gradient(145deg, #ffffff, #f8f9fa);
   padding: 20px;
@@ -255,6 +265,11 @@
     font-size: 1.1rem;
   }
   
+  .location-description {
+    font-size: 0.9rem;
+    margin-top: 8px;
+  }
+  
   .content-container {
     padding: 15px;
   }
@@ -307,6 +322,11 @@
     font-size: 1.2rem;
   }
   
+  .location-description {
+    font-size: 0.95rem;
+    margin-top: 10px;
+  }
+  
   .content-text {
     font-size: 0.95rem;
   }
@@ -337,6 +357,11 @@
   
   .card-subtitle {
     font-size: 1.4rem;
+  }
+  
+  .location-description {
+    font-size: 1.1rem;
+    margin-top: 12px;
   }
   
   .content-container {
@@ -390,6 +415,11 @@
   
   .card-subtitle {
     font-size: 1.6rem;
+  }
+  
+  .location-description {
+    font-size: 1.2rem;
+    margin-top: 15px;
   }
   
   .content-container {
@@ -452,6 +482,11 @@
   
   .card-subtitle {
     font-size: 1.8rem;
+  }
+  
+  .location-description {
+    font-size: 1.3rem;
+    margin-top: 18px;
   }
   
   .content-container {
@@ -518,7 +553,7 @@
 
 .photo-frame {
   width: 100%;
-  height: 200px;
+  height: 300px;
   border: 2px dashed #ddd;
   border-radius: 8px;
   display: flex;
@@ -535,7 +570,7 @@
 
 .location-photo {
   width: 100%;
-  height: 200px;
+  height: 300px;
   border-radius: 8px;
   object-fit: cover;
   display: block;
@@ -545,7 +580,11 @@
 /* Responsive adjustments for different card types */
 @media (max-width: 768px) {
   .photo-frame {
-    height: 150px;
+    height: 250px;
+  }
+  
+  .location-photo {
+    height: 250px;
   }
   
   .photo-text {
