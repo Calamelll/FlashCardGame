@@ -1,6 +1,6 @@
-# 🎵 Song Flashcard Game (Web App)
+# 🎴 Flashcard Game (Web App)
 
-A fun interactive web game optimized for iPad where players sing abbreviated lyrics to help friends guess the song name!
+A fun interactive web game optimized for iPad where players use flashcards to help friends guess the answer!
 
 ## 🎮 How to Play
 
@@ -179,7 +179,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Song Flashcard Game',
+        name: 'Flashcard Game',
         short_name: 'SongCards',
         theme_color: '#667eea',
         icons: [

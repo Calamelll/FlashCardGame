@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import './FlashCard.css'
 
-const FlashCard = ({ song, onSwipeRight, onSwipeLeft }) => {
+const FlashCard = ({ card, onSwipeRight, onSwipeLeft }) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [swipeDirection, setSwipeDirection] = useState(null)
@@ -93,11 +93,11 @@ const FlashCard = ({ song, onSwipeRight, onSwipeLeft }) => {
     if (deltaX > SWIPE_THRESHOLD) {
       // Swipe right - correct
       animateCardExit('right')
-      setTimeout(() => onSwipeRight(), 300)
+      setTimeout(() => onSwipeRight(), 500)
     } else if (deltaX < -SWIPE_THRESHOLD) {
       // Swipe left - try again
       animateCardExit('left')
-      setTimeout(() => onSwipeLeft(), 300)
+      setTimeout(() => onSwipeLeft(), 500)
     } else {
       // Return to center
       animateCardReturn()
@@ -108,15 +108,18 @@ const FlashCard = ({ song, onSwipeRight, onSwipeLeft }) => {
 
   const animateCardExit = (direction) => {
     if (cardRef.current) {
-      const exitX = direction === 'right' ? '100vw' : '-100vw'
-      cardRef.current.style.transform = `translateX(${exitX}) rotate(${direction === 'right' ? '25deg' : '-25deg'})`
+      const exitX = direction === 'right' ? '120vw' : '-120vw'
+      const rotation = direction === 'right' ? '30deg' : '-30deg'
+      cardRef.current.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease-out'
+      cardRef.current.style.transform = `translateX(${exitX}) rotate(${rotation}) scale(0.8)`
       cardRef.current.style.opacity = '0'
     }
   }
 
   const animateCardReturn = () => {
     if (cardRef.current) {
-      cardRef.current.style.transform = 'translateX(0) rotate(0deg)'
+      cardRef.current.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease-out'
+      cardRef.current.style.transform = 'translateX(0) rotate(0deg) scale(1)'
       cardRef.current.style.opacity = '1'
     }
     setDragOffset({ x: 0, y: 0 })
@@ -148,21 +151,23 @@ const FlashCard = ({ song, onSwipeRight, onSwipeLeft }) => {
     }
   }, [isDragging, dragOffset])
 
-  // Reset card position when song changes
+  // Reset card position when card changes
   useEffect(() => {
     setDragOffset({ x: 0, y: 0 })
     setSwipeDirection(null)
     setIsDragging(false)
     if (cardRef.current) {
-      cardRef.current.style.transform = 'translateX(0) rotate(0deg)'
+      cardRef.current.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'
+      cardRef.current.style.transform = 'translateX(0) rotate(0deg) scale(1)'
       cardRef.current.style.opacity = '1'
     }
-  }, [song?.id])
+  }, [card?.id])
 
-  if (!song) return null
+  if (!card) return null
 
-  const rotation = Math.min(25, Math.max(-25, dragOffset.x * 0.1))
-  const opacity = Math.max(0.5, 1 - Math.abs(dragOffset.x) * 0.002)
+  const rotation = Math.min(15, Math.max(-15, dragOffset.x * 0.08))
+  const opacity = Math.max(0.7, 1 - Math.abs(dragOffset.x) * 0.001)
+  const scale = Math.max(0.95, 1 - Math.abs(dragOffset.x) * 0.0005)
 
   return (
     <div className="flash-card-container">
@@ -170,9 +175,10 @@ const FlashCard = ({ song, onSwipeRight, onSwipeLeft }) => {
         ref={cardRef}
         className={`flash-card ${isDragging ? 'dragging' : ''}`}
         style={{
-          transform: `translateX(${dragOffset.x}px) translateY(${dragOffset.y * 0.3}px) rotate(${rotation}deg)`,
+          transform: `translateX(${dragOffset.x}px) translateY(${dragOffset.y * 0.2}px) rotate(${rotation}deg) scale(${scale})`,
           opacity: opacity,
-          cursor: isDragging ? 'grabbing' : 'grab'
+          cursor: isDragging ? 'grabbing' : 'grab',
+          transition: isDragging ? 'none' : 'transform 0.2s ease-out'
         }}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
@@ -194,20 +200,55 @@ const FlashCard = ({ song, onSwipeRight, onSwipeLeft }) => {
 
         {/* Card Content */}
         <div className="card-content">
-          <div className="song-header">
-            <h2 className="song-title">{song.title}</h2>
-            <p className="artist-name">by {song.artist}</p>
-          </div>
-          
-          <div className="lyrics-container">
-            <h3 className="lyrics-title">Lyrics:</h3>
-            <p className="lyrics-text">{song.lyrics}</p>
-          </div>
-          
-          <div className="hint-container">
-            <h3 className="hint-title">💡 Hint:</h3>
-            <p className="hint-text">{song.hint}</p>
-          </div>
+          {card.type === 'song' ? (
+            <>
+              <div className="card-header">
+                <h2 className="card-title">{card.title}</h2>
+                <p className="card-subtitle">by {card.artist}</p>
+              </div>
+              
+              <div className="content-container">
+                <h3 className="content-title">Lyrics:</h3>
+                <p className="content-text">{card.lyrics}</p>
+              </div>
+              
+              <div className="hint-container">
+                <h3 className="hint-title">💡 Hint:</h3>
+                <p className="hint-text">{card.hint}</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="card-header">
+                <h2 className="card-title">{card.location}</h2>
+              </div>
+              
+              <div className="content-container">
+                {card.photo && (
+                  <div className="photo-placeholder">
+                    <img 
+                      src={card.photo} 
+                      alt={card.location} 
+                      className="location-photo" 
+                      loading="lazy"
+                      onError={(e) => {
+                        console.log('Failed to load image:', card.photo);
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                      onLoad={(e) => {
+                        e.target.nextSibling.style.display = 'none';
+                      }}
+                    />
+                    <div className="photo-frame" style={{display: 'flex'}}>
+                      <span className="photo-text">🖼️ กำลังโหลดรูปภาพ...</span>
+                    </div>
+                  </div>
+                )}
+                {card.description && <p className="content-text">{card.description}</p>}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Drag instruction */}

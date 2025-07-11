@@ -226,23 +226,23 @@
   background: #c0392b;
 }
 
-/* Song Management Section */
-.song-management-section {
+/* Card Management Section */
+.card-management-section {
   padding: 30px;
 }
 
-.song-count {
+.card-count {
   color: #7f8c8d;
   font-size: 1.2rem;
   font-weight: normal;
 }
 
-.song-actions {
+.card-actions {
   display: flex;
   gap: 10px;
 }
 
-.add-song-button {
+.add-card-button {
   background: #27ae60;
   color: white;
   border: none;
@@ -254,7 +254,7 @@
   transition: all 0.3s ease;
 }
 
-.add-song-button:hover {
+.add-card-button:hover {
   background: #219a52;
   transform: translateY(-2px);
 }
@@ -290,13 +290,13 @@
   font-size: 1rem;
 }
 
-.song-list {
+.card-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.song-item {
+.card-item {
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 10px;
@@ -304,42 +304,42 @@
   transition: all 0.3s ease;
 }
 
-.song-item:hover {
+.card-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.song-item-header {
+.card-item-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 15px;
 }
 
-.song-item-info {
+.card-item-info {
   flex: 1;
 }
 
-.song-item-title {
+.card-item-title {
   font-size: 1.2rem;
   font-weight: bold;
   color: #2c3e50;
   margin: 0 0 5px 0;
 }
 
-.song-item-artist {
+.card-item-subtitle {
   font-size: 1rem;
   color: #7f8c8d;
   margin: 0;
   font-style: italic;
 }
 
-.song-item-actions {
+.card-item-actions {
   display: flex;
   gap: 10px;
 }
 
-.song-action-button {
+.card-action-button {
   background: #3498db;
   color: white;
   border: none;
@@ -351,33 +351,33 @@
   transition: all 0.3s ease;
 }
 
-.song-action-button:hover {
+.card-action-button:hover {
   transform: translateY(-2px);
 }
 
-.song-action-button.danger {
+.card-action-button.danger {
   background: #e74c3c;
 }
 
-.song-action-button.danger:hover {
+.card-action-button.danger:hover {
   background: #c0392b;
 }
 
-.song-item-content {
+.card-item-content {
   background: white;
   padding: 15px;
   border-radius: 8px;
   border-left: 4px solid #3498db;
 }
 
-.song-item-lyrics {
+.card-item-text {
   font-size: 0.9rem;
   color: #2c3e50;
   margin-bottom: 10px;
   line-height: 1.6;
 }
 
-.song-item-hint {
+.card-item-hint {
   font-size: 0.9rem;
   color: #7f8c8d;
   line-height: 1.4;
@@ -521,6 +521,27 @@
   border-left: 4px solid #dc3545;
 }
 
+/* Form select for card type */
+.form-select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-select:hover {
+  border-color: #bbb;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .settings-container {
@@ -570,12 +591,12 @@
     justify-content: flex-start;
   }
 
-  .song-item-header {
+  .card-item-header {
     flex-direction: column;
     gap: 10px;
   }
 
-  .song-item-actions {
+  .card-item-actions {
     justify-content: flex-start;
   }
 
@@ -613,7 +634,7 @@
   }
 
   .deck-action-button,
-  .song-action-button {
+  .card-action-button {
     padding: 6px 12px;
     font-size: 0.8rem;
   }

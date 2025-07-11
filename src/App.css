@@ -534,7 +534,7 @@
 }
 
 /* Correct Songs Section */
-.correct-songs-section {
+.correct-cards-section {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 25px;
@@ -544,7 +544,7 @@
   text-align: left;
 }
 
-.correct-songs-title {
+.correct-cards-title {
   color: white;
   font-size: 1.4rem;
   font-weight: bold;
@@ -553,7 +553,7 @@
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-.correct-songs-list {
+.correct-cards-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -562,7 +562,7 @@
   padding-right: 10px;
 }
 
-.correct-song-item {
+.correct-card-item {
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.15);
@@ -572,12 +572,12 @@
   border-left: 4px solid #4CAF50;
 }
 
-.correct-song-item:hover {
+.correct-card-item:hover {
   background: rgba(255, 255, 255, 0.25);
   transform: translateX(5px);
 }
 
-.song-number {
+.card-number {
   color: #4CAF50;
   font-weight: bold;
   font-size: 1.1rem;
@@ -586,20 +586,20 @@
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-.song-info {
+.card-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.song-name {
+.card-name {
   color: white;
   font-weight: bold;
   font-size: 1.1rem;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-.song-artist {
+.card-artist {
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.9rem;
   font-style: italic;
@@ -607,7 +607,7 @@
 }
 
 /* No Correct Songs */
-.no-correct-songs {
+.no-correct-cards {
   background: rgba(255, 152, 0, 0.1);
   border-radius: 15px;
   padding: 25px;
@@ -616,35 +616,35 @@
   border: 1px solid rgba(255, 152, 0, 0.3);
 }
 
-.no-correct-songs p {
+.no-correct-cards p {
   color: white;
   font-size: 1.1rem;
   margin-bottom: 10px;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-.no-correct-songs p:last-child {
+.no-correct-cards p:last-child {
   margin-bottom: 0;
   color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
 }
 
 /* Custom Scrollbar for correct songs list */
-.correct-songs-list::-webkit-scrollbar {
+.correct-cards-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.correct-songs-list::-webkit-scrollbar-track {
+.correct-cards-list::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
 }
 
-.correct-songs-list::-webkit-scrollbar-thumb {
+.correct-cards-list::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
   border-radius: 3px;
 }
 
-.correct-songs-list::-webkit-scrollbar-thumb:hover {
+.correct-cards-list::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
 
@@ -713,20 +713,20 @@
     font-size: 1.1rem;
   }
   
-  .correct-songs-title {
+  .correct-cards-title {
     font-size: 1.2rem;
   }
   
-  .correct-songs-section {
+  .correct-cards-section {
     padding: 20px;
     margin: 20px 0;
   }
   
-  .song-name {
+  .card-name {
     font-size: 1rem;
   }
   
-  .song-artist {
+  .card-artist {
     font-size: 0.8rem;
   }
 
@@ -788,15 +788,15 @@
     font-size: 1.4rem;
   }
   
-  .correct-songs-title {
+  .correct-cards-title {
     font-size: 1.5rem;
   }
   
-  .song-name {
+  .card-name {
     font-size: 1.2rem;
   }
   
-  .song-artist {
+  .card-artist {
     font-size: 1rem;
   }
 }
@@ -857,15 +857,15 @@
     font-size: 1.5rem;
   }
   
-  .correct-songs-title {
+  .correct-cards-title {
     font-size: 1.6rem;
   }
   
-  .song-name {
+  .card-name {
     font-size: 1.3rem;
   }
   
-  .song-artist {
+  .card-artist {
     font-size: 1.1rem;
   }
 }
@@ -918,15 +918,15 @@
     font-size: 1.8rem;
   }
   
-  .correct-songs-title {
+  .correct-cards-title {
     font-size: 1.8rem;
   }
   
-  .song-name {
+  .card-name {
     font-size: 1.4rem;
   }
   
-  .song-artist {
+  .card-artist {
     font-size: 1.2rem;
   }
 }

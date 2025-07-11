@@ -12,14 +12,19 @@ const Settings = ({
   const [newDeckDescription, setNewDeckDescription] = useState('')
   const [showNewDeckForm, setShowNewDeckForm] = useState(false)
   const [activeDeckId, setActiveDeckId] = useState(selectedDeckId)
-  const [newSong, setNewSong] = useState({
+  const [newCard, setNewCard] = useState({
+    type: 'song',
     title: '',
     artist: '',
     lyrics: '',
+    name: '',
+    location: '',
+    description: '',
+    photo: '',
     hint: ''
   })
-  const [showNewSongForm, setShowNewSongForm] = useState(false)
-  const [editingSong, setEditingSong] = useState(null)
+  const [showNewCardForm, setShowNewCardForm] = useState(false)
+  const [editingCard, setEditingCard] = useState(null)
   const [importText, setImportText] = useState('')
   const [showImportForm, setShowImportForm] = useState(false)
   const [importError, setImportError] = useState('')
@@ -57,7 +62,7 @@ const Settings = ({
       id: newDeckId,
       name: newDeckName.trim(),
       description: newDeckDescription.trim() || 'Custom deck',
-      songs: [],
+      cards: [],
       isDefault: false
     }
 
@@ -109,7 +114,7 @@ const Settings = ({
       id: newDeckId,
       name: `${originalDeck.name} (Copy)`,
       description: originalDeck.description,
-      songs: [...originalDeck.songs],
+      cards: [...originalDeck.cards],
       isDefault: false
     }
 
@@ -123,30 +128,49 @@ const Settings = ({
     setActiveDeckId(newDeckId)
   }
 
-  // Add song to active deck
-  const addSongToActiveDeck = () => {
-    if (!newSong.title || !newSong.artist || !newSong.lyrics) {
-      alert('Please fill in all required fields!')
-      return
-    }
-
+  // Add card to active deck
+  const addCardToActiveDeck = () => {
     const activeDeck = getActiveDeck()
     if (activeDeck.isDefault) {
-      alert('Cannot add songs to default deck! Please create a custom deck first.')
+      alert('Cannot add cards to default deck! Please create a custom deck first.')
       return
     }
 
-    const songToAdd = {
+    let cardToAdd = {
       id: Date.now(),
-      title: newSong.title,
-      artist: newSong.artist,
-      lyrics: newSong.lyrics,
-      hint: newSong.hint || ''
+      type: newCard.type,
+      hint: newCard.hint || ''
+    }
+
+    // Validate and create card based on type
+    if (newCard.type === 'song') {
+      if (!newCard.title || !newCard.artist || !newCard.lyrics) {
+        alert('Please fill in all required fields for song card!')
+        return
+      }
+      cardToAdd = {
+        ...cardToAdd,
+        title: newCard.title,
+        artist: newCard.artist,
+        lyrics: newCard.lyrics
+      }
+    } else if (newCard.type === 'location') {
+      if (!newCard.name || !newCard.location || !newCard.description) {
+        alert('Please fill in all required fields for location card!')
+        return
+      }
+      cardToAdd = {
+        ...cardToAdd,
+        name: newCard.name,
+        location: newCard.location,
+        description: newCard.description,
+        photo: newCard.photo || ''
+      }
     }
 
     const updatedDeck = {
       ...activeDeck,
-      songs: [...activeDeck.songs, songToAdd]
+      cards: [...activeDeck.cards, cardToAdd]
     }
 
     const updatedDecks = {
@@ -157,39 +181,94 @@ const Settings = ({
     updateAllDecks(updatedDecks)
     saveDecksToStorage(updatedDecks)
     
-    setNewSong({ title: '', artist: '', lyrics: '', hint: '' })
-    setShowNewSongForm(false)
-  }
-
-  // Edit song in active deck
-  const editSong = (song) => {
-    setEditingSong(song)
-    setNewSong({
-      title: song.title,
-      artist: song.artist,
-      lyrics: song.lyrics,
-      hint: song.hint || ''
+    setNewCard({ 
+      type: 'song',
+      title: '',
+      artist: '',
+      lyrics: '',
+      name: '',
+      location: '',
+      description: '',
+      photo: '',
+      hint: ''
     })
-    setShowNewSongForm(true)
+    setShowNewCardForm(false)
   }
 
-  // Save edited song
-  const saveEditedSong = () => {
-    if (!newSong.title || !newSong.artist || !newSong.lyrics) {
-      alert('Please fill in all required fields!')
-      return
+  // Edit card in active deck
+  const editCard = (card) => {
+    setEditingCard(card)
+    if (card.type === 'song') {
+      setNewCard({
+        type: 'song',
+        title: card.title,
+        artist: card.artist,
+        lyrics: card.lyrics,
+        name: '',
+        location: '',
+        description: '',
+        photo: '',
+        hint: card.hint || ''
+      })
+    } else if (card.type === 'location') {
+      setNewCard({
+        type: 'location',
+        title: '',
+        artist: '',
+        lyrics: '',
+        name: card.name,
+        location: card.location,
+        description: card.description,
+        photo: card.photo || '',
+        hint: card.hint || ''
+      })
+    }
+    setShowNewCardForm(true)
+  }
+
+  // Save edited card
+  const saveEditedCard = () => {
+    const activeDeck = getActiveDeck()
+    
+    let updatedCard = {
+      ...editingCard,
+      type: newCard.type,
+      hint: newCard.hint || ''
     }
 
-    const activeDeck = getActiveDeck()
-    const updatedSongs = activeDeck.songs.map(song => 
-      song.id === editingSong.id 
-        ? { ...song, title: newSong.title, artist: newSong.artist, lyrics: newSong.lyrics, hint: newSong.hint }
-        : song
+    // Validate and update card based on type
+    if (newCard.type === 'song') {
+      if (!newCard.title || !newCard.artist || !newCard.lyrics) {
+        alert('Please fill in all required fields for song card!')
+        return
+      }
+      updatedCard = {
+        ...updatedCard,
+        title: newCard.title,
+        artist: newCard.artist,
+        lyrics: newCard.lyrics
+      }
+    } else if (newCard.type === 'location') {
+      if (!newCard.name || !newCard.location || !newCard.description) {
+        alert('Please fill in all required fields for location card!')
+        return
+      }
+      updatedCard = {
+        ...updatedCard,
+        name: newCard.name,
+        location: newCard.location,
+        description: newCard.description,
+        photo: newCard.photo || ''
+      }
+    }
+
+    const updatedCards = activeDeck.cards.map(card => 
+      card.id === editingCard.id ? updatedCard : card
     )
 
     const updatedDeck = {
       ...activeDeck,
-      songs: updatedSongs
+      cards: updatedCards
     }
 
     const updatedDecks = {
@@ -200,26 +279,36 @@ const Settings = ({
     updateAllDecks(updatedDecks)
     saveDecksToStorage(updatedDecks)
     
-    setEditingSong(null)
-    setNewSong({ title: '', artist: '', lyrics: '', hint: '' })
-    setShowNewSongForm(false)
+    setEditingCard(null)
+    setNewCard({ 
+      type: 'song',
+      title: '',
+      artist: '',
+      lyrics: '',
+      name: '',
+      location: '',
+      description: '',
+      photo: '',
+      hint: ''
+    })
+    setShowNewCardForm(false)
   }
 
-  // Delete song from active deck
-  const deleteSong = (songId) => {
+  // Delete card from active deck
+  const deleteCard = (cardId) => {
     const activeDeck = getActiveDeck()
     
     if (activeDeck.isDefault) {
-      alert('Cannot delete songs from default deck!')
+      alert('Cannot delete cards from default deck!')
       return
     }
 
-    if (window.confirm('Are you sure you want to delete this song?')) {
-      const updatedSongs = activeDeck.songs.filter(song => song.id !== songId)
+    if (window.confirm('Are you sure you want to delete this card?')) {
+      const updatedCards = activeDeck.cards.filter(card => card.id !== cardId)
       
       const updatedDeck = {
         ...activeDeck,
-        songs: updatedSongs
+        cards: updatedCards
       }
 
       const updatedDecks = {
@@ -233,7 +322,7 @@ const Settings = ({
   }
 
   // Import songs to active deck
-  const importSongs = () => {
+  const importCards = () => {
     try {
       const importedSongs = JSON.parse(importText)
       
@@ -284,10 +373,20 @@ const Settings = ({
   }
 
   // Cancel forms
-  const cancelNewSongForm = () => {
-    setNewSong({ title: '', artist: '', lyrics: '', hint: '' })
-    setShowNewSongForm(false)
-    setEditingSong(null)
+  const cancelNewCardForm = () => {
+    setNewCard({ 
+      type: 'song',
+      title: '',
+      artist: '',
+      lyrics: '',
+      name: '',
+      location: '',
+      description: '',
+      photo: '',
+      hint: ''
+    })
+    setShowNewCardForm(false)
+    setEditingCard(null)
   }
 
   const cancelImportForm = () => {
@@ -306,12 +405,12 @@ const Settings = ({
   const getStats = () => {
     const totalDecks = Object.keys(allDecks).length
     const customDecks = Object.values(allDecks).filter(deck => !deck.isDefault).length
-    const totalSongs = Object.values(allDecks).reduce((sum, deck) => sum + (deck.songs?.length || 0), 0)
-    const customSongs = Object.values(allDecks)
+    const totalCards = Object.values(allDecks).reduce((sum, deck) => sum + (deck.cards?.length || 0), 0)
+    const customCards = Object.values(allDecks)
       .filter(deck => !deck.isDefault)
-      .reduce((sum, deck) => sum + (deck.songs?.length || 0), 0)
+      .reduce((sum, deck) => sum + (deck.cards?.length || 0), 0)
 
-    return { totalDecks, customDecks, totalSongs, customSongs }
+    return { totalDecks, customDecks, totalCards, customCards }
   }
 
   const stats = getStats()
@@ -321,7 +420,7 @@ const Settings = ({
     <div className="settings-container">
       <div className="settings-content">
         <div className="settings-header">
-          <h1 className="settings-title">🎵 Deck Management</h1>
+          <h1 className="settings-title">🎴 Deck Management</h1>
           <button className="back-button" onClick={goToWelcome}>
             ← Back to Game
           </button>
@@ -340,12 +439,12 @@ const Settings = ({
               <span className="stat-label">Custom Decks</span>
             </div>
             <div className="stat-card">
-              <span className="stat-number">{stats.totalSongs}</span>
-              <span className="stat-label">Total Songs</span>
+              <span className="stat-number">{stats.totalCards}</span>
+              <span className="stat-label">Total Cards</span>
             </div>
             <div className="stat-card">
-              <span className="stat-number">{stats.customSongs}</span>
-              <span className="stat-label">Custom Songs</span>
+              <span className="stat-number">{stats.customCards}</span>
+              <span className="stat-label">Custom Cards</span>
             </div>
           </div>
         </div>
@@ -408,7 +507,7 @@ const Settings = ({
                     <h3 className="deck-item-name">{deck.name}</h3>
                     <p className="deck-item-description">{deck.description}</p>
                     <div className="deck-item-meta">
-                      <span className="deck-item-count">{deck.songs?.length || 0} songs</span>
+                      <span className="deck-item-count">{deck.cards?.length || 0} cards</span>
                       <span className="deck-item-type">
                         {deck.isDefault ? '🎵 Default' : '⭐ Custom'}
                       </span>
@@ -442,21 +541,21 @@ const Settings = ({
           </div>
         </div>
 
-        {/* Song Management for Active Deck */}
-        <div className="song-management-section">
+        {/* Card Management for Active Deck */}
+        <div className="card-management-section">
           <div className="section-header">
             <h2 className="section-title">
-              🎵 Songs in "{activeDeck.name}"
-              <span className="song-count">({activeDeck.songs?.length || 0} songs)</span>
+              🎴 Cards in "{activeDeck.name}"
+              <span className="card-count">({activeDeck.cards?.length || 0} cards)</span>
             </h2>
-            <div className="song-actions">
+            <div className="card-actions">
               {!activeDeck.isDefault && (
                 <>
                   <button 
-                    className="add-song-button"
-                    onClick={() => setShowNewSongForm(true)}
+                    className="add-card-button"
+                    onClick={() => setShowNewCardForm(true)}
                   >
-                    + Add Song
+                    + Add Card
                   </button>
                   <button 
                     className="import-button"
@@ -471,66 +570,136 @@ const Settings = ({
 
           {activeDeck.isDefault && (
             <div className="read-only-notice">
-              <p>💡 Default deck is read-only. Create a custom deck to add or edit songs.</p>
+              <p>💡 Default deck is read-only. Create a custom deck to add or edit cards.</p>
             </div>
           )}
 
-          {/* Song Forms */}
-          {showNewSongForm && (
+          {/* Card Forms */}
+          {showNewCardForm && (
             <div className="form-overlay">
               <div className="form-container">
                 <h3 className="form-title">
-                  {editingSong ? 'Edit Song' : 'Add New Song'}
+                  {editingCard ? 'Edit Card' : 'Add New Card'}
                 </h3>
                 <div className="form-group">
-                  <label className="form-label">Song Title *</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={newSong.title}
-                    onChange={(e) => setNewSong({...newSong, title: e.target.value})}
-                    placeholder="Enter song title..."
-                  />
+                  <label className="form-label">Card Type *</label>
+                  <select 
+                    className="form-select"
+                    value={newCard.type}
+                    onChange={(e) => setNewCard({...newCard, type: e.target.value})}
+                  >
+                    <option value="song">Song Card</option>
+                    <option value="location">Location Card</option>
+                  </select>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Artist *</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={newSong.artist}
-                    onChange={(e) => setNewSong({...newSong, artist: e.target.value})}
-                    placeholder="Enter artist name..."
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Abbreviated Lyrics *</label>
-                  <textarea
-                    className="form-textarea"
-                    value={newSong.lyrics}
-                    onChange={(e) => setNewSong({...newSong, lyrics: e.target.value})}
-                    placeholder="Enter abbreviated lyrics..."
-                    rows="4"
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Hint (Optional)</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={newSong.hint}
-                    onChange={(e) => setNewSong({...newSong, hint: e.target.value})}
-                    placeholder="Enter a hint..."
-                  />
-                </div>
+                
+                {newCard.type === 'song' ? (
+                  <>
+                    <div className="form-group">
+                      <label className="form-label">Song Title *</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={newCard.title}
+                        onChange={(e) => setNewCard({...newCard, title: e.target.value})}
+                        placeholder="Enter song title..."
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Artist *</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={newCard.artist}
+                        onChange={(e) => setNewCard({...newCard, artist: e.target.value})}
+                        placeholder="Enter artist name..."
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Abbreviated Lyrics *</label>
+                      <textarea
+                        className="form-textarea"
+                        value={newCard.lyrics}
+                        onChange={(e) => setNewCard({...newCard, lyrics: e.target.value})}
+                        placeholder="Enter abbreviated lyrics..."
+                        rows="4"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Hint (Optional)</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={newCard.hint}
+                        onChange={(e) => setNewCard({...newCard, hint: e.target.value})}
+                        placeholder="Enter a hint..."
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="form-group">
+                      <label className="form-label">Location Name *</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={newCard.name}
+                        onChange={(e) => setNewCard({...newCard, name: e.target.value})}
+                        placeholder="Enter location name..."
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Location Address *</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={newCard.location}
+                        onChange={(e) => setNewCard({...newCard, location: e.target.value})}
+                        placeholder="Enter location address..."
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Description *</label>
+                      <textarea
+                        className="form-textarea"
+                        value={newCard.description}
+                        onChange={(e) => setNewCard({...newCard, description: e.target.value})}
+                        placeholder="Enter location description..."
+                        rows="4"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Photo URL</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={newCard.photo}
+                        onChange={(e) => setNewCard({...newCard, photo: e.target.value})}
+                        placeholder="Enter photo URL..."
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Hint (Optional)</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={newCard.hint}
+                        onChange={(e) => setNewCard({...newCard, hint: e.target.value})}
+                        placeholder="Enter a hint..."
+                      />
+                    </div>
+                  </>
+                )}
+                
                 <div className="form-buttons">
-                  <button className="cancel-button" onClick={cancelNewSongForm}>
+                  <button className="cancel-button" onClick={cancelNewCardForm}>
                     Cancel
                   </button>
                   <button 
                     className="save-button" 
-                    onClick={editingSong ? saveEditedSong : addSongToActiveDeck}
+                    onClick={editingCard ? saveEditedCard : addCardToActiveDeck}
                   >
-                    {editingSong ? 'Save Changes' : 'Add Song'}
+                    {editingCard ? 'Save Changes' : 'Add Card'}
                   </button>
                 </div>
               </div>
@@ -540,7 +709,7 @@ const Settings = ({
           {showImportForm && (
             <div className="form-overlay">
               <div className="form-container">
-                <h3 className="form-title">Import Songs from JSON</h3>
+                <h3 className="form-title">Import Cards from JSON</h3>
                 <div className="form-group">
                   <label className="form-label">JSON Data</label>
                   <textarea
@@ -558,37 +727,39 @@ const Settings = ({
                   <button className="cancel-button" onClick={cancelImportForm}>
                     Cancel
                   </button>
-                  <button className="save-button" onClick={importSongs}>
-                    Import Songs
+                  <button className="save-button" onClick={importCards}>
+                    Import Cards
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Song List */}
-          <div className="song-list">
-            {activeDeck.songs?.map((song, index) => (
-              <div key={song.id} className="song-item">
-                <div className="song-item-header">
-                  <div className="song-item-info">
-                    <h4 className="song-item-title">
-                      {index + 1}. {song.title}
+          {/* Card List */}
+          <div className="card-list">
+            {activeDeck.cards?.map((card, index) => (
+              <div key={card.id} className="card-item">
+                <div className="card-item-header">
+                  <div className="card-item-info">
+                    <h4 className="card-item-title">
+                      {index + 1}. {card.type === 'song' ? card.title : card.name}
                     </h4>
-                    <p className="song-item-artist">by {song.artist}</p>
+                    <p className="card-item-subtitle">
+                      {card.type === 'song' ? `by ${card.artist}` : card.location}
+                    </p>
                   </div>
-                  <div className="song-item-actions">
+                  <div className="card-item-actions">
                     {!activeDeck.isDefault && (
                       <>
                         <button 
-                          className="song-action-button"
-                          onClick={() => editSong(song)}
+                          className="card-action-button"
+                          onClick={() => editCard(card)}
                         >
                           ✏️ Edit
                         </button>
                         <button 
-                          className="song-action-button danger"
-                          onClick={() => deleteSong(song.id)}
+                          className="card-action-button danger"
+                          onClick={() => deleteCard(card.id)}
                         >
                           🗑️ Delete
                         </button>
@@ -596,13 +767,13 @@ const Settings = ({
                     )}
                   </div>
                 </div>
-                <div className="song-item-content">
-                  <div className="song-item-lyrics">
-                    <strong>Lyrics:</strong> {song.lyrics}
+                <div className="card-item-content">
+                  <div className="card-item-text">
+                    <strong>{card.type === 'song' ? 'Lyrics:' : 'Description:'}</strong> {card.type === 'song' ? card.lyrics : card.description}
                   </div>
-                  {song.hint && (
-                    <div className="song-item-hint">
-                      <strong>Hint:</strong> {song.hint}
+                  {card.hint && (
+                    <div className="card-item-hint">
+                      <strong>Hint:</strong> {card.hint}
                     </div>
                   )}
                 </div>
@@ -610,11 +781,11 @@ const Settings = ({
             ))}
           </div>
 
-          {(!activeDeck.songs || activeDeck.songs.length === 0) && (
+          {(!activeDeck.cards || activeDeck.cards.length === 0) && (
             <div className="empty-state">
-              <p>No songs in this deck yet.</p>
+              <p>No cards in this deck yet.</p>
               {!activeDeck.isDefault && (
-                <p>Add some songs to get started!</p>
+                <p>Add some cards to get started!</p>
               )}
             </div>
           )}

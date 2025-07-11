@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import FlashCard from './components/FlashCard'
 import Settings from './components/Settings'
 import { sampleSongs } from './data/sampleSongs'
+import { sampleLocations } from './data/sampleLocation'
 import './App.css'
 
 const App = () => {
@@ -18,11 +19,19 @@ const App = () => {
 
   // Initialize default deck and load custom decks
   useEffect(() => {
-    const defaultDeck = {
+    const defaultSongDeck = {
       id: 'default',
       name: 'Default Songs',
       description: 'Original song collection',
-      songs: sampleSongs,
+      cards: sampleSongs,
+      isDefault: true
+    }
+
+    const defaultLocationDeck = {
+      id: 'locations',
+      name: 'Default Locations',
+      description: 'Famous places and landmarks',
+      cards: sampleLocations,
       isDefault: true
     }
 
@@ -30,7 +39,8 @@ const App = () => {
     const customDecks = savedDecks ? JSON.parse(savedDecks) : {}
     
     const allDecksData = {
-      default: defaultDeck,
+      default: defaultSongDeck,
+      locations: defaultLocationDeck,
       ...customDecks
     }
     
@@ -39,8 +49,8 @@ const App = () => {
 
   // Initialize available cards when deck is selected
   useEffect(() => {
-    if (allDecks[selectedDeckId]?.songs) {
-      const shuffled = [...allDecks[selectedDeckId].songs].sort(() => Math.random() - 0.5)
+    if (allDecks[selectedDeckId]?.cards) {
+      const shuffled = [...allDecks[selectedDeckId].cards].sort(() => Math.random() - 0.5)
       setAvailableCards(shuffled)
     }
   }, [allDecks, selectedDeckId])
@@ -62,10 +72,10 @@ const App = () => {
   }
 
   const handleSwipeLeft = () => {
-    const currentSong = availableCards[currentCard]
+    const currentCardData = availableCards[currentCard]
     let shuffledCards = [...availableCards].sort(() => Math.random() - 0.5)
     
-    if (shuffledCards.length > 1 && shuffledCards[0].id === currentSong.id) {
+    if (shuffledCards.length > 1 && shuffledCards[0].id === currentCardData.id) {
       [shuffledCards[0], shuffledCards[1]] = [shuffledCards[1], shuffledCards[0]]
     }
     
@@ -79,12 +89,12 @@ const App = () => {
   }
 
   const startNewGame = () => {
-    if (!allDecks[selectedDeckId]?.songs || allDecks[selectedDeckId].songs.length === 0) {
-      alert('Selected deck has no songs! Please choose a different deck.')
+    if (!allDecks[selectedDeckId]?.cards || allDecks[selectedDeckId].cards.length === 0) {
+      alert('Selected deck has no cards! Please choose a different deck.')
       return
     }
 
-    const shuffled = [...allDecks[selectedDeckId].songs].sort(() => Math.random() - 0.5)
+    const shuffled = [...allDecks[selectedDeckId].cards].sort(() => Math.random() - 0.5)
     setAvailableCards(shuffled)
     setCorrectCards([])
     setScore(0)
@@ -118,8 +128,8 @@ const App = () => {
     setCurrentView('welcome')
   }
 
-  const getTotalSongs = () => {
-    return Object.values(allDecks).reduce((total, deck) => total + (deck.songs?.length || 0), 0)
+  const getTotalCards = () => {
+    return Object.values(allDecks).reduce((total, deck) => total + (deck.cards?.length || 0), 0)
   }
 
   const getSelectedDeck = () => {
@@ -127,7 +137,7 @@ const App = () => {
       id: 'default',
       name: 'Default Songs',
       description: 'Original song collection',
-      songs: sampleSongs,
+      cards: sampleSongs,
       isDefault: true
     }
   }
@@ -143,7 +153,7 @@ const App = () => {
         <div className="container">
           <div className="welcome-container">
             <div className="welcome-content animate-fade-in">
-              <h1 className="welcome-title">🎵 Song Flashcard Game 🎵</h1>
+              <h1 className="welcome-title">Flashcard Game</h1>
               <p>Loading decks...</p>
             </div>
           </div>
@@ -155,11 +165,11 @@ const App = () => {
       <div className="container">
         <div className="welcome-container">
           <div className="welcome-content animate-fade-in">
-            <h1 className="welcome-title">🎵 Song Flashcard Game 🎵</h1>
+            <h1 className="welcome-title">Flashcard Game</h1>
             <h2 className="welcome-subtitle">How to Play:</h2>
             <div className="instructions">
-              <p>• Sing abbreviations of the lyrics to your friend</p>
-              <p>• They guess the song name</p>
+              <p>• Show the flashcard content to your friend</p>
+              <p>• They guess the answer</p>
               <p>• Swipe RIGHT if they guess correctly</p>
               <p>• Swipe LEFT to try the card again later</p>
               <p>• Try to get the highest score!</p>
@@ -169,13 +179,13 @@ const App = () => {
               <h3 className="deck-title">Selected Deck:</h3>
               <div className="selected-deck">
                 <span className="deck-name">{selectedDeck.name}</span>
-                <span className="deck-count">({selectedDeck.songs?.length || 0} songs)</span>
+                <span className="deck-count">({selectedDeck.cards?.length || 0} cards)</span>
               </div>
               <p className="deck-description">{selectedDeck.description}</p>
             </div>
 
             <div className="welcome-stats">
-              <p>📚 Available Decks: {deckCount} | Total Songs: {getTotalSongs()}</p>
+              <p>📚 Available Decks: {deckCount} | Total Cards: {getTotalCards()}</p>
             </div>
             
             <div className="welcome-buttons">
@@ -218,7 +228,7 @@ const App = () => {
         <div className="deck-selection-container">
           <div className="deck-selection-content">
             <h1 className="deck-selection-title">🎯 Select a Deck</h1>
-            <p className="deck-selection-subtitle">Choose which collection of songs to play with:</p>
+            <p className="deck-selection-subtitle">Choose which collection of cards to play with:</p>
             
             <div className="decks-grid">
               {Object.values(allDecks).map(deck => (
@@ -229,7 +239,7 @@ const App = () => {
                 >
                   <div className="deck-card-header">
                     <h3 className="deck-card-name">{deck.name}</h3>
-                    <span className="deck-card-count">{deck.songs?.length || 0} songs</span>
+                    <span className="deck-card-count">{deck.cards?.length || 0} cards</span>
                   </div>
                   <p className="deck-card-description">{deck.description}</p>
                   <div className="deck-card-type">
@@ -269,8 +279,8 @@ const App = () => {
   // Game Over Screen
   if (showGameOver) {
     const selectedDeck = getSelectedDeck()
-    const totalSongs = selectedDeck.songs?.length || 0
-    const percentage = totalSongs > 0 ? Math.round((score / totalSongs) * 100) : 0
+                const totalCards = selectedDeck.cards?.length || 0
+            const percentage = totalCards > 0 ? Math.round((score / totalCards) * 100) : 0
     
     return (
       <div className="container">
@@ -281,20 +291,24 @@ const App = () => {
               <p>Deck: <strong>{selectedDeck.name}</strong></p>
             </div>
             <div className="score-summary">
-              <p className="final-score">Final Score: {score}/{totalSongs}</p>
+              <p className="final-score">Final Score: {score}/{totalCards}</p>
               <p className="percentage-score">{percentage}% Success Rate</p>
             </div>
             
             {correctCards.length > 0 && (
-              <div className="correct-songs-section">
-                <h3 className="correct-songs-title">✅ Songs You Guessed Correctly:</h3>
-                <div className="correct-songs-list">
-                  {correctCards.map((song, index) => (
-                    <div key={song.id} className="correct-song-item">
-                      <span className="song-number">{index + 1}.</span>
-                      <div className="song-info">
-                        <span className="song-name">"{song.title}"</span>
-                        <span className="song-artist">by {song.artist}</span>
+              <div className="correct-cards-section">
+                <h3 className="correct-cards-title">✅ Cards You Guessed Correctly:</h3>
+                <div className="correct-cards-list">
+                  {correctCards.map((card, index) => (
+                    <div key={card.id} className="correct-card-item">
+                      <span className="card-number">{index + 1}.</span>
+                      <div className="card-info">
+                        <span className="card-name">
+                          "{card.type === 'song' ? card.title : card.location}"
+                        </span>
+                        <span className="card-artist">
+                          {card.type === 'song' ? `by ${card.artist}` : (card.description || '')}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -303,8 +317,8 @@ const App = () => {
             )}
             
             {correctCards.length === 0 && (
-              <div className="no-correct-songs">
-                <p>😅 No songs guessed correctly this time!</p>
+              <div className="no-correct-cards">
+                <p>😅 No cards guessed correctly this time!</p>
                 <p>Don't worry, try again - you'll do better!</p>
               </div>
             )}
@@ -329,7 +343,7 @@ const App = () => {
   // Perfect Game Screen
   if (availableCards.length === 0) {
     const selectedDeck = getSelectedDeck()
-    const totalSongs = selectedDeck.songs?.length || 0
+    const totalCards = selectedDeck.cards?.length || 0
 
     return (
       <div className="container">
@@ -340,19 +354,23 @@ const App = () => {
               <p>Deck: <strong>{selectedDeck.name}</strong></p>
             </div>
             <div className="score-summary">
-              <p className="final-score">Final Score: {score}/{totalSongs}</p>
+              <p className="final-score">Final Score: {score}/{totalCards}</p>
               <p className="percentage-score">100% Success Rate!</p>
             </div>
             
-            <div className="correct-songs-section">
-              <h3 className="correct-songs-title">🏆 All Songs Completed:</h3>
-              <div className="correct-songs-list">
-                {correctCards.map((song, index) => (
-                  <div key={song.id} className="correct-song-item">
-                    <span className="song-number">{index + 1}.</span>
-                    <div className="song-info">
-                      <span className="song-name">"{song.title}"</span>
-                      <span className="song-artist">by {song.artist}</span>
+            <div className="correct-cards-section">
+              <h3 className="correct-cards-title">🏆 All Cards Completed:</h3>
+              <div className="correct-cards-list">
+                {correctCards.map((card, index) => (
+                  <div key={card.id} className="correct-card-item">
+                    <span className="card-number">{index + 1}.</span>
+                    <div className="card-info">
+                      <span className="card-name">
+                        "{card.type === 'song' ? card.title : card.location}"
+                      </span>
+                      <span className="card-artist">
+                        {card.type === 'song' ? `by ${card.artist}` : (card.description || '')}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -383,7 +401,7 @@ const App = () => {
       <div className="container">
         <div className="welcome-container">
           <div className="welcome-content animate-fade-in">
-            <h1 className="welcome-title">🎵 Song Flashcard Game 🎵</h1>
+            <h1 className="welcome-title">Flashcard Game</h1>
             <p>Loading game...</p>
             <button className="start-button" onClick={goToWelcome}>
               ← Back to Menu
@@ -416,7 +434,7 @@ const App = () => {
       <div className="card-container">
         <FlashCard
           key={`${availableCards[currentCard]?.id}-${cardRenderKey}`}
-          song={availableCards[currentCard]}
+          card={availableCards[currentCard]}
           onSwipeRight={handleSwipeRight}
           onSwipeLeft={handleSwipeLeft}
         />
