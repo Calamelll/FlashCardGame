@@ -1,0 +1,500 @@
+/* Flash Card Container */
+.flash-card-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+
+/* Flash Card */
+.flash-card {
+  width: 85%;
+  max-width: 600px;
+  height: 70vh;
+  max-height: 500px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  cursor: grab;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  touch-action: none;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              opacity 0.3s ease, 
+              box-shadow 0.3s ease;
+  animation: cardEnter 0.5s ease-out;
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.flash-card:active,
+.flash-card.dragging {
+  cursor: grabbing;
+}
+
+.flash-card:hover {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Swipe Indicators */
+.swipe-indicator {
+  position: absolute;
+  top: 20px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.swipe-indicator.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.correct-indicator {
+  right: 20px;
+  background: #4CAF50;
+  color: white;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.try-again-indicator {
+  left: 20px;
+  background: #FF9800;
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+}
+
+.indicator-text {
+  font-weight: bold;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Card Content */
+.card-content {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+}
+
+.song-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.song-title {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  line-height: 1.1;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  background: linear-gradient(135deg, #3498db, #2c3e50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.artist-name {
+  font-size: 1.3rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.lyrics-container {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 15px;
+  border-left: 4px solid #3498db;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.lyrics-container:hover {
+  transform: translateY(-2px);
+}
+
+.lyrics-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.lyrics-text {
+  font-size: 1rem;
+  color: #34495e;
+  line-height: 1.6;
+  text-align: center;
+  white-space: pre-line;
+}
+
+.hint-container {
+  background: #fff3cd;
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 4px solid #ffc107;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.hint-container:hover {
+  transform: translateY(-2px);
+}
+
+.hint-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #856404;
+  margin-bottom: 8px;
+}
+
+.hint-text {
+  font-size: 0.9rem;
+  color: #856404;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Drag Instruction */
+.drag-instruction {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  backdrop-filter: blur(10px);
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.flash-card:hover .drag-instruction {
+  opacity: 1;
+}
+
+.flash-card.dragging .drag-instruction {
+  opacity: 0;
+}
+
+/* Responsive Design */
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .flash-card {
+    width: 95%;
+    height: 65vh;
+    max-height: 450px;
+  }
+  
+  .card-content {
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .song-title {
+    font-size: 2.4rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  
+  .artist-name {
+    font-size: 1.1rem;
+  }
+  
+  .lyrics-container {
+    padding: 15px;
+  }
+  
+  .lyrics-title {
+    font-size: 1rem;
+  }
+  
+  .lyrics-text {
+    font-size: 0.9rem;
+  }
+  
+  .hint-container {
+    padding: 12px;
+  }
+  
+  .hint-title {
+    font-size: 0.9rem;
+  }
+  
+  .hint-text {
+    font-size: 0.8rem;
+  }
+  
+  .indicator-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .flash-card {
+    width: 90%;
+    height: 68vh;
+    max-height: 480px;
+  }
+  
+  .card-content {
+    padding: 25px;
+    gap: 22px;
+  }
+  
+  .song-title {
+    font-size: 2.4rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  
+  .artist-name {
+    font-size: 1.2rem;
+  }
+  
+  .lyrics-text {
+    font-size: 0.95rem;
+  }
+  
+  .hint-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* iPad Portrait */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .flash-card {
+    width: 80%;
+    height: 70vh;
+    max-height: 550px;
+  }
+  
+  .card-content {
+    padding: 35px;
+    gap: 30px;
+  }
+  
+  .song-title {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  
+  .artist-name {
+    font-size: 1.4rem;
+  }
+  
+  .lyrics-container {
+    padding: 25px;
+  }
+  
+  .lyrics-title {
+    font-size: 1.2rem;
+  }
+  
+  .lyrics-text {
+    font-size: 1.1rem;
+  }
+  
+  .hint-container {
+    padding: 18px;
+  }
+  
+  .hint-title {
+    font-size: 1.1rem;
+  }
+  
+  .hint-text {
+    font-size: 1rem;
+  }
+  
+  .indicator-text {
+    font-size: 1rem;
+  }
+}
+
+/* iPad Landscape - Optimal for gameplay */
+@media (min-width: 1024px) and (orientation: landscape) {
+  .flash-card {
+    width: 85%;
+    max-width: 800px;
+    height: 75vh;
+    max-height: 600px;
+  }
+  
+  .card-content {
+    padding: 40px;
+    gap: 35px;
+  }
+  
+  .song-title {
+    font-size: 3.2rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  
+  .artist-name {
+    font-size: 1.6rem;
+  }
+  
+  .lyrics-container {
+    padding: 30px;
+  }
+  
+  .lyrics-title {
+    font-size: 1.3rem;
+  }
+  
+  .lyrics-text {
+    font-size: 1.2rem;
+  }
+  
+  .hint-container {
+    padding: 20px;
+  }
+  
+  .hint-title {
+    font-size: 1.2rem;
+  }
+  
+  .hint-text {
+    font-size: 1.1rem;
+  }
+  
+  .indicator-text {
+    font-size: 1.1rem;
+  }
+  
+  .swipe-indicator {
+    padding: 12px 18px;
+  }
+  
+  .drag-instruction {
+    font-size: 0.9rem;
+    padding: 10px 18px;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1440px) {
+  .flash-card {
+    width: 70%;
+    max-width: 900px;
+    height: 70vh;
+    max-height: 650px;
+  }
+  
+  .card-content {
+    padding: 50px;
+    gap: 40px;
+  }
+  
+  .song-title {
+    font-size: 3.6rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  
+  .artist-name {
+    font-size: 1.8rem;
+  }
+  
+  .lyrics-container {
+    padding: 35px;
+  }
+  
+  .lyrics-title {
+    font-size: 1.4rem;
+  }
+  
+  .lyrics-text {
+    font-size: 1.3rem;
+  }
+  
+  .hint-container {
+    padding: 25px;
+  }
+  
+  .hint-title {
+    font-size: 1.3rem;
+  }
+  
+  .hint-text {
+    font-size: 1.2rem;
+  }
+  
+  .indicator-text {
+    font-size: 1.2rem;
+  }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+  .flash-card {
+    touch-action: pan-x;
+  }
+  
+  .drag-instruction {
+    opacity: 1;
+  }
+}
+
+/* Hover effects for desktop */
+@media (hover: hover) and (pointer: fine) {
+  .flash-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Prevent text selection during drag */
+.flash-card * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+} 
