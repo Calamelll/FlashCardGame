@@ -220,3 +220,44 @@ Enjoy playing the Song Flashcard Game with your friends and family! Perfect for 
 - **Report Issues**: [Your issues page]
 
 **Made with ❤️ for music lovers everywhere!** 
+
+## 🎯 Abbreviation Lyrics Implementation
+
+The game includes a feature to create abbreviated versions of Thai lyrics to make the game more challenging and fun. Here's how it works:
+
+### Word Splitting
+1. Words are split using the Thai word segmentation tool from [Thai Word Split](https://fuqua.io/thai-word-split/browser/)
+2. The split words are cleaned and normalized to remove extra spaces and special characters
+
+### Abbreviation Rules
+The system follows these rules to create abbreviated versions:
+
+1. **Basic Consonants**:
+   - Single consonants are preserved with "อ" added (e.g., "ก" → "กอ")
+   - Tone marks are preserved in the abbreviated form
+
+2. **Leading Vowels**:
+   - Words starting with "เ", "ไ", "ใ", or "แ" take the following consonant + "อ"
+   - Tone marks from the original word are preserved
+
+3. **Consonant Clusters**:
+   - Common clusters like "กร", "กล", "ขว", etc. are preserved as a unit
+   - The cluster is followed by "อ" in the abbreviated form
+   - Examples: "กราบ" → "กรอ", "กลาง" → "กลอ"
+
+4. **Special Cases**:
+   - Line breaks (`\n`) and section markers (`[Hook]`, `[Intro]`) are preserved as-is
+   - Spaces between words are maintained in the output
+
+### Implementation Notes
+- The abbreviation system uses a predefined list of Thai consonant clusters
+- Tone marks (่, ้, ๊, ๋) are mapped to preserve the original pronunciation
+- The output maintains the original word spacing and structure
+
+### Example Usage
+```javascript
+// Input: "เธอ กับ ฉัน"
+// Output: "ธอ กอ ชอ"
+```
+
+For detailed implementation, refer to the source code in the project repository.
