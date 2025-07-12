@@ -225,34 +225,76 @@ Enjoy playing the Song Flashcard Game with your friends and family! Perfect for 
 
 The game includes a feature to create abbreviated versions of Thai lyrics to make the game more challenging and fun. Here's how it works:
 
-### Word Splitting
-1. Words are split using the Thai word segmentation tool from [Thai Word Split](https://fuqua.io/thai-word-split/browser/)
-2. The split words are cleaned and normalized to remove extra spaces and special characters
+### Process Steps
 
-### Abbreviation Rules
-The system follows these rules to create abbreviated versions:
+1. **Word Splitting**
+   - Use Thai word segmentation tool from [Thai Word Split](https://fuqua.io/thai-word-split/browser/)
+   - Input your lyrics to get properly segmented Thai words
 
-1. **Basic Consonants**:
-   - Single consonants are preserved with "อ" added (e.g., "ก" → "กอ")
-   - Tone marks are preserved in the abbreviated form
+2. **Text Cleaning**
+   - Clean the split words to remove extra spaces
+   - Normalize special characters and section markers
 
-2. **Leading Vowels**:
-   - Words starting with "เ", "ไ", "ใ", or "แ" take the following consonant + "อ"
-   - Tone marks from the original word are preserved
+3. **Abbreviation Processing**
+   ```python
+   import re
 
-3. **Consonant Clusters**:
-   - Common clusters like "กร", "กล", "ขว", etc. are preserved as a unit
-   - The cluster is followed by "อ" in the abbreviated form
-   - Examples: "กราบ" → "กรอ", "กลาง" → "กลอ"
+   # Input text with words and special markers
+   input_text = ""
 
-4. **Special Cases**:
-   - Line breaks (`\n`) and section markers (`[Hook]`, `[Intro]`) are preserved as-is
-   - Spaces between words are maintained in the output
+   # Normalize spacing and special markers
+   normalized = re.sub(r"\s+", " ", input_text).replace("\\ n", "\\n").replace("[ Hook ]", "[Hook]").replace("[ Intro ]", "[Intro]").strip()
+   words = normalized.split(" ")
 
-### Implementation Notes
-- The abbreviation system uses a predefined list of Thai consonant clusters
-- Tone marks (่, ้, ๊, ๋) are mapped to preserve the original pronunciation
-- The output maintains the original word spacing and structure
+   # Thai consonant clusters
+   consonant_clusters = ["กร", "กล", "กว", "ขร", "ขล", "ขว", "คร", "คล", "คว", "ตร",
+                        "ปร", "ปล", "พร", "พล", "ผล", "ทร", "พระ", "อย", "หม", "หล"]
+
+   # Tone mark rules: map tone marker on the vowel sound
+   tone_marks = {
+       "่": "่",  # mai ek
+       "้": "้",  # mai tho
+       "๊": "๊",  # mai tri
+       "๋": "๋",  # mai chattawa
+   }
+
+   # Function to extract first consonant/cluster and preserve tone mark
+   def extract_abbreviation_extended(word):
+       if word in ["\\n", "[Hook]", "[Intro]"]:
+           return word
+
+       tone = ""
+       # Extract tone mark (first occurrence only)
+       for char in word:
+           if char in tone_marks:
+               tone = tone_marks[char]
+               break
+
+       # Handle words starting with "เ" and followed by a consonant
+       if (word.startswith("เ") or word.startswith("ไ") or word.startswith("ใ") or word.startswith("แ")) and len(word) > 1:
+           next_char = word[1]
+           return next_char + tone + "อ"
+
+       # Check consonant cluster
+       for cluster in consonant_clusters:
+           if word.startswith(cluster):
+               return cluster + tone + "อ"
+
+       # Default case
+       return word[0] + tone + "อ"
+
+   # Convert each word
+   abbreviated = [extract_abbreviation_extended(word) for word in words]
+   # Combine into one line
+   abbreviation_line = " ".join(abbreviated)
+   print(abbreviation_line)
+   ```
+
+4. **Output Verification**
+   - Review the generated abbreviations
+   - Ensure tone marks are preserved correctly
+   - Verify consonant clusters are handled properly
+   - Check that special markers (e.g., [Hook], [Intro]) remain intact
 
 ### Example Usage
 ```javascript
@@ -260,4 +302,8 @@ The system follows these rules to create abbreviated versions:
 // Output: "ธอ กอ ชอ"
 ```
 
-For detailed implementation, refer to the source code in the project repository.
+### Implementation Notes
+- The script handles common Thai consonant clusters
+- Preserves tone marks in their original positions
+- Maintains special section markers and line breaks
+- Supports leading vowels (เ, ไ, ใ, แ)
