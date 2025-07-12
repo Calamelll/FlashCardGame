@@ -5,6 +5,21 @@ import { sampleSongs } from './data/sampleSongs'
 import { sampleLocations } from './data/sampleLocation'
 import './App.css'
 
+// Simple test component
+const TestComponent = () => (
+  <div style={{ 
+    padding: '20px', 
+    textAlign: 'center', 
+    backgroundColor: '#fff',
+    margin: '20px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+  }}>
+    <h1>React is working!</h1>
+    <p>If you can see this message, React is properly initialized.</p>
+  </div>
+)
+
 const App = () => {
   const [currentCard, setCurrentCard] = useState(0)
   const [score, setScore] = useState(0)
@@ -17,8 +32,20 @@ const App = () => {
   const [allDecks, setAllDecks] = useState({}) // Object with deck IDs as keys
   const [selectedDeckId, setSelectedDeckId] = useState('default')
 
+  // Debug logging
+  useEffect(() => {
+    console.log('Current View:', currentView)
+    console.log('All Decks:', allDecks)
+    console.log('Selected Deck ID:', selectedDeckId)
+    console.log('Available Cards:', availableCards)
+  }, [currentView, allDecks, selectedDeckId, availableCards])
+
   // Initialize default deck and load custom decks
   useEffect(() => {
+    console.log('Initializing decks...')
+    console.log('Sample Songs:', sampleSongs)
+    console.log('Sample Locations:', sampleLocations)
+
     const defaultSongDeck = {
       id: 'default',
       name: 'Default Songs',
@@ -44,6 +71,7 @@ const App = () => {
       ...customDecks
     }
     
+    console.log('Setting all decks:', allDecksData)
     setAllDecks(allDecksData)
   }, [])
 

@@ -6,11 +6,12 @@ export default defineConfig({
   base: '/',
   server: {
     port: 3000,
-    host: true
+    host: true,
+    open: true // Auto-open browser
   },
   build: {
     outDir: 'dist',
-    sourcemap: false,
+    sourcemap: true, // Enable source maps for debugging
     rollupOptions: {
       output: {
         manualChunks: {
